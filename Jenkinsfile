@@ -20,12 +20,6 @@ pipeline {
           sh 'mvn compile'
         }
       }
-      stage('Code Review') {
-        steps {
-          //warnings next generation plugin should be installed
-          sh 'mvn -P metrics pmd:pmd'
-        }
-      }
       stage('Build Package') {
         steps{
             sh 'clean install'
