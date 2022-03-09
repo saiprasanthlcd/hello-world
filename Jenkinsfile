@@ -3,6 +3,7 @@ pipeline {
   tools {
     maven 'maven-3.8.3'
     jdk 'Java11'
+    git 'Git'
   } 
   stages{
       stage('Delete Workspace') {
