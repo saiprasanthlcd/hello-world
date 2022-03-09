@@ -25,11 +25,6 @@ pipeline {
           //warnings next generation plugin should be installed
           sh 'mvn -P metrics pmd:pmd'
         }
-        post {
-          always {
-            recordIssues(tools: [acuCobol(pattern: '**/target/pmd.xml', reportEncoding: 'UTF-8')])
-          }
-        }
       }
       stage('Build Package') {
         steps{
