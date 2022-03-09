@@ -22,7 +22,7 @@ pipeline {
       }
       stage('Build Package') {
         steps{
-            sh 'clean install'
+            sh 'mvn clean install'
         }
       }
       stage('Copy Artifacts to Ansible Server over SSH') {
