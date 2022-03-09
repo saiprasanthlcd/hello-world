@@ -15,6 +15,22 @@ pipeline {
             git 'https://github.com/saiprasanthlcd/hello-world.git'
         }
       }
+      stage('compile code') {
+        steps {
+          sh 'mvn compile'
+        }
+      }
+      stage('Code Review') {
+        steps {
+          //warnings next generation plugin should be installed
+          sh 'mvn -P metrics pmd:pmd'
+        }
+        post {
+          always {
+            recordIssues(tools: [acuCobol(pattern: '**/target/pmd.xml', reportEncoding: 'UTF-8')])
+          }
+        }
+      }
       stage('Junit test') {
         steps{
           sh 'mvn test'
