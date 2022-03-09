@@ -31,16 +31,6 @@ pipeline {
           }
         }
       }
-      stage('Junit test') {
-        steps{
-          sh 'mvn test'
-        }
-        post{
-            always {
-              junit '**/target/surefire-reports/*.xml'  
-            }
-        }
-      }
       stage('Build Package') {
         steps{
             sh 'clean install'
