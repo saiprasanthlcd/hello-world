@@ -31,7 +31,7 @@
     <p>Already have an account? <a href="#">Sign in</a>.</p>
   </div>
 
-   <h1> Thankyou ra abbai, endhi ra ni badha, Happy Learning </h1>
+   <h1> endhi ra ni badha, Happy Learning </h1>
 
   
 </form>
