@@ -37,7 +37,7 @@ pipeline {
             steps {
                 rtServer (
                     id: "jfrog",
-                    url: https://jfrog.sidhudevops.co.in,
+                    url: "https://jfrog.sidhudevops.co.in",
                     credentialsId: JFROG
                 )
 
