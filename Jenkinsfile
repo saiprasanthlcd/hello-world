@@ -20,10 +20,34 @@ pipeline {
           sh 'mvn compile'
         }
       }
+      stage('SonarQube Analysis') {
+        steps {
+          // sonarqube plugin needs to be installed and should be configured in configure system in Jenkins
+          withSonarQubeEnv('sonarqube') {
+            sh 'mvn sonar:sonar'
+          }
+        }
+      }
       stage('Build Package') {
         steps{
             sh 'mvn clean install'
         }
+      }
+      stage ('Upload file to artifactory') {
+            steps {
+                rtUpload (
+                    // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
+                    serverId: jfrog,
+                    spec: """{
+                            "files": [
+                                    {
+                                        "pattern": "**/target/*.war",
+                                        "target": "libs-release-local"
+                                    }
+                                ]
+                          }"""
+                )
+            }
       }
       stage('Copy Artifacts to Ansible Server over SSH') {
         steps{
