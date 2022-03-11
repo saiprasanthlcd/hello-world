@@ -33,21 +33,48 @@ pipeline {
             sh 'mvn clean install'
         }
       }
-      stage ('Upload file to artifactory') {
+      stage ('Artifactory configuration') {
             steps {
-                rtUpload (
-                    // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
-                    serverId: jfrog,
-                    spec: """{
-                            "files": [
-                                    {
-                                        "pattern": "**/target/*.war",
-                                        "target": "libs-release-local"
-                                    }
-                                ]
-                          }"""
+                rtServer (
+                    id: "jfrog",
+                    url: https://jfrog.sidhudevops.co.in,
+                    credentialsId: JFROG
+                )
+
+                rtMavenDeployer (
+                    id: "maven-3.8.3",
+                    serverId: "jfrog",
+                    releaseRepo: libs-release-local,
+                    snapshotRepo: libs-snapshot-local
+                )
+
+                rtMavenResolver (
+                    id: "maven-3.8.3",
+                    serverId: "jfrog",
+                    releaseRepo: libs-release,
+                    snapshotRepo: libs-snapshot
                 )
             }
+      }
+
+      stage ('Exec Maven') {
+          steps {
+              rtMavenRun (
+                  tool: maven-3.8.3, // Tool name from Jenkins configuration
+                  pom: 'PipelineRegappDeclarative/pom.xml',
+                  goals: 'clean install',
+                  deployerId: "maven-3.8.3",
+                  resolverId: "maven-3.8.3"
+              )
+          }
+      }
+
+      stage ('Publish build info') {
+          steps {
+              rtPublishBuildInfo (
+                  serverId: "jfrog"
+              )
+          }
       }
       stage('Copy Artifacts to Ansible Server over SSH') {
         steps{
