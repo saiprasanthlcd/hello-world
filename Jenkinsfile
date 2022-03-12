@@ -33,7 +33,7 @@ pipeline {
             sh 'mvn clean install'
         }
       }
-      stage ('Server'){
+      stage ('Server Connect to JFROG Artifactory'){
           steps {
               rtServer (
                 id: "jfrog",
@@ -45,14 +45,14 @@ pipeline {
                       )
           }
       }
-      stage('Upload'){
+      stage('Upload to JFROG'){
           steps{
               rtUpload (
                 serverId:"jfrog" ,
                 spec: '''{
                   "files": [
                     {
-                    "pattern": "*.war",
+                    "pattern": "**/*.war",
                     "target": "libs-snapshot-local"
                     }
                           ]
