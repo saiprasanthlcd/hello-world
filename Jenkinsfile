@@ -33,42 +33,33 @@ pipeline {
             sh 'mvn clean install'
         }
       }
-      stage ('Artifactory configuration') {
-            steps {
-                rtServer (
-                    id: "jfrog",
-                    url: "https://jfrog.sidhudevops.co.in",
-                    credentialsId: JFROG
-                )
-
-                rtMavenDeployer (
-                    id: "maven-3.8.3",
-                    serverId: "jfrog",
-                    releaseRepo: libs-release-local,
-                    snapshotRepo: libs-snapshot-local
-                )
-
-                rtMavenResolver (
-                    id: "maven-3.8.3",
-                    serverId: "jfrog",
-                    releaseRepo: libs-release,
-                    snapshotRepo: libs-snapshot
-                )
-            }
-      }
-
-      stage ('Exec Maven') {
+      stage ('Server'){
           steps {
-              rtMavenRun (
-                  tool: "maven-3.8.3", // Tool name from Jenkins configuration
-                  pom: 'PipelineRegappDeclarative/pom.xml',
-                  goals: 'clean install',
-                  deployerId: "maven-3.8.3",
-                  resolverId: "maven-3.8.3"
-              )
+              rtServer (
+                id: "jfrog",
+                url: 'https://jfrog.sidhudevops.co.in/artifactory/',
+                username: 'jenkins',
+                password: '9849199983@Dad',
+                bypassProxy: true,
+                  timeout: 300
+                      )
           }
       }
-
+      stage('Upload'){
+          steps{
+              rtUpload (
+                serverId:"jfrog" ,
+                spec: '''{
+                  "files": [
+                    {
+                    "pattern": "*.war",
+                    "target": "libs-snapshot-local"
+                    }
+                          ]
+                          }''',
+                      )
+          }
+      }
       stage ('Publish build info') {
           steps {
               rtPublishBuildInfo (
